@@ -23,9 +23,9 @@ body {
 }
 
 @keyframes gradientMove {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 header {
@@ -51,7 +51,7 @@ header p {
 
 .container {
   width: 90%;
-  max-width: 900px;
+  max-width: 950px;
   margin: auto;
   padding: 30px;
   background: rgba(255,255,255,0.08);
@@ -108,11 +108,55 @@ button:hover {
 small {
   opacity: 0.7;
 }
+
+.search-wrapper {
+  position: relative;
+  margin: 20px 0;
+}
+
+.search-wrapper input {
+  padding-left: 55px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.search-wrapper input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  top: 17px;
+  font-size: 22px;
+}
+
+.chips {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.chip {
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.chip:hover {
+  transform: translateY(-3px);
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
 
 <header>
@@ -127,16 +171,24 @@ small {
   <input id="questionInput" placeholder="Type your question...">
   <button onclick="postQuestion()">Post Question</button>
 
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" placeholder="Search questions...">
+  </div>
+
+  <h3>🔥 Trending Now</h3>
+  <div id="trendingChips" class="chips"></div>
+
   <h2>Questions</h2>
   <div id="questionsList"></div>
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To,
+  const firebaseConfig = {
+  apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
   authDomain: "short-stuff-2450e.firebaseapp.com",
   projectId: "short-stuff-2450e",
-  storageBucket: "short-stuff-2450e.appspot.com",
+  storageBucket: "short-stuff-2450e.firebasestorage.app",
   messagingSenderId: "896780231019",
   appId: "1:896780231019:web:df80fe761636fa67da6c2e"
 };
@@ -159,10 +211,15 @@ function postQuestion() {
   if (name.trim() === "") name = "Anonymous";
 
   db.collection("questions").add({
-    text,
-    name,
-    likes: 0,
-    likedBy: [],
+    text: text,
+    name: name,
+    reactions: {
+      fire: 0,
+      laugh: 0,
+      hundred: 0,
+      heart: 0
+    },
+    reactedUsers: {},
     answers: [],
     time: Date.now(),
     ownerId: userId
@@ -171,21 +228,29 @@ function postQuestion() {
   document.getElementById("questionInput").value = "";
 }
 
-function likeQuestion(id) {
+function reactToQuestion(id, emojiType) {
   db.collection("questions").doc(id).get().then(doc => {
     let data = doc.data();
-    let likedBy = data.likedBy || [];
+    let reactedUsers = data.reactedUsers || {};
 
-    if (likedBy.includes(userId)) {
-      alert("You already liked this post.");
+    if (reactedUsers[userId]) {
+      alert("You already reacted to this post.");
       return;
     }
 
-    likedBy.push(userId);
+    let reactions = data.reactions || {
+      fire: 0,
+      laugh: 0,
+      hundred: 0,
+      heart: 0
+    };
+
+    reactions[emojiType]++;
+    reactedUsers[userId] = emojiType;
 
     db.collection("questions").doc(id).update({
-      likes: data.likes + 1,
-      likedBy: likedBy
+      reactions: reactions,
+      reactedUsers: reactedUsers
     });
   });
 }
@@ -227,14 +292,62 @@ function timeAgo(timestamp) {
   return days + " days ago";
 }
 
+function searchFromChip(text) {
+  document.getElementById("searchInput").value = text;
+  loadQuestions();
+}
+
+function loadTrendingChips() {
+  db.collection("questions").onSnapshot(snapshot => {
+    let questions = [];
+
+    snapshot.forEach(doc => {
+      let q = doc.data();
+
+      let score =
+        (q.reactions?.fire || 0) +
+        (q.reactions?.laugh || 0) +
+        (q.reactions?.hundred || 0) +
+        (q.reactions?.heart || 0);
+
+      questions.push({
+        text: q.text,
+        score: score
+      });
+    });
+
+    questions.sort((a, b) => b.score - a.score);
+
+    let html = "";
+
+    questions.slice(0, 5).forEach(q => {
+      html += `
+        <div class="chip" onclick="searchFromChip('${q.text.replace(/'/g, "")}')">
+          ${q.text.substring(0, 25)}...
+        </div>
+      `;
+    });
+
+    document.getElementById("trendingChips").innerHTML = html;
+  });
+}
+
 function loadQuestions() {
   db.collection("questions")
     .orderBy("time", "desc")
     .onSnapshot(snapshot => {
       let html = "";
-
-      snapshot.forEach(doc => {
+            snapshot.forEach(doc => {
         let q = doc.data();
+
+        let searchValue = document
+          .getElementById("searchInput")
+          .value
+          .toLowerCase();
+
+        if (!q.text.toLowerCase().includes(searchValue)) {
+          return;
+        }
 
         let answersHtml = "";
         (q.answers || []).forEach(answer => {
@@ -243,7 +356,11 @@ function loadQuestions() {
 
         let deleteButton = "";
         if (q.ownerId === userId) {
-          deleteButton = `<button onclick="deleteQuestion('${doc.id}')">Delete</button>`;
+          deleteButton = `
+            <button onclick="deleteQuestion('${doc.id}')">
+              Delete
+            </button>
+          `;
         }
 
         html += `
@@ -254,7 +371,22 @@ function loadQuestions() {
             <p>${q.text}</p>
 
             <div class="question-actions">
-              <button onclick="likeQuestion('${doc.id}')">❤️ ${q.likes}</button>
+              <button onclick="reactToQuestion('${doc.id}','fire')">
+                🔥 ${q.reactions?.fire || 0}
+              </button>
+
+              <button onclick="reactToQuestion('${doc.id}','laugh')">
+                😂 ${q.reactions?.laugh || 0}
+              </button>
+
+              <button onclick="reactToQuestion('${doc.id}','hundred')">
+                💯 ${q.reactions?.hundred || 0}
+              </button>
+
+              <button onclick="reactToQuestion('${doc.id}','heart')">
+                ❤️ ${q.reactions?.heart || 0}
+              </button>
+
               ${deleteButton}
             </div>
 
@@ -272,10 +404,15 @@ function loadQuestions() {
     });
 }
 
-document.getElementById("questionInput").addEventListener("keypress", function(e){
-  if (e.key === "Enter") postQuestion();
+document.getElementById("questionInput").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    postQuestion();
+  }
 });
 
+document.getElementById("searchInput").addEventListener("input", loadQuestions);
+
+loadTrendingChips();
 loadQuestions();
 </script>
 
