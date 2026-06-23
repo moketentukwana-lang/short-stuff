@@ -2,11 +2,124 @@
 <html>
 <head>
   <title>My Q&A Website</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: #000;
+      color: #fff;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px;
+      background: #fff;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+
+    .question {
+      background: #111;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #333;
+    }
+  </style>
+
+  <!-- Firebase scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
 
-  <h1>Welcome to my Q&A site</h1>
+<header>
+  <h1>My Q&A Website</h1>
+  <p>Ask questions and get answers from users</p>
+</header>
+
+<div class="container">
+
+  <h3>Ask a Question</h3>
+  <input id="questionInput" placeholder="Type your question here...">
+  <button onclick="postQuestion()">Post Question</button>
+
+  <h3>Questions</h3>
+  <div id="questionsList"></div>
+
+</div>
+
+<script>
+  // ✅ FIREBASE CONFIG (YOUR REAL ONE)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
+    authDomain: "short-stuff-2450e.firebaseapp.com",
+    projectId: "short-stuff-2450e",
+    storageBucket: "short-stuff-2450e.appspot.com",
+    messagingSenderId: "896780231019",
+    appId: "1:896780231019:web:df80fe761636fa67da6c2e"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ➕ Post question
+  function postQuestion() {
+    let text = document.getElementById("questionInput").value;
+
+    if (text.trim() === "") return;
+
+    db.collection("questions").add({
+      text: text,
+      time: new Date()
+    });
+
+    document.getElementById("questionInput").value = "";
+  }
+
+  // 📥 Load questions live
+  function loadQuestions() {
+    db.collection("questions")
+      .orderBy("time", "desc")
+      .onSnapshot(snapshot => {
+        let html = "";
+
+        snapshot.forEach(doc => {
+          html += `
+            <div class="question">
+              ${doc.data().text}
+            </div>
+          `;
+        });
+
+        document.getElementById("questionsList").innerHTML = html;
+      });
+  }
+
+  loadQuestions();
+</script>
 
 </body>
 </html>
