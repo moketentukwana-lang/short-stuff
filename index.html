@@ -78,20 +78,58 @@ button {
 </div>
 
 <script>
-function post() {
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+// 🔥 Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCJxIvRTvDSfJWJ6L4et9wwc1CAuDC-To",
+  authDomain: "short-stuff-2450e.firebaseapp.com",
+  projectId: "short-stuff-2450e",
+  storageBucket: "short-stuff-2450e.firebasestorage.app",
+  messagingSenderId: "896780231019",
+  appId: "1:896780231019:web:df80fe761636fa67da6c2e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const feed = document.getElementById("feed");
+
+// 👉 Create post (NOW SAVES TO FIREBASE)
+window.post = async function () {
   const text = document.getElementById("textInput").value;
   if (!text) return;
 
-  const feed = document.getElementById("feed");
-
-  const div = document.createElement("div");
-  div.className = "post";
-  div.innerText = text;
-
-  feed.prepend(div);
+  await addDoc(collection(db, "posts"), {
+    text: text,
+    createdAt: serverTimestamp()
+  });
 
   document.getElementById("textInput").value = "";
-}
+};
+
+// 👉 LIVE FEED (REAL TIME)
+onSnapshot(collection(db, "posts"), (snapshot) => {
+  feed.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    const post = doc.data();
+
+    const div = document.createElement("div");
+    div.className = "post";
+    div.innerText = post.text;
+
+    feed.prepend(div);
+  });
+});
 </script>
 
 </body>
