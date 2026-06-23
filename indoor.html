@@ -5,61 +5,132 @@
 <title>Social Space</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f1115;
-  color: white;
+body <div class="topbar">Social Space</div>
+
+<div class="container">
+
+  <div class="input-card">
+    <input id="textInput" placeholder="What's on your mind?" />
+    <button onclick="post()">Post</button>
+  </div>
+
+  <div id="feed"></div>
+
+</div>
+
+/* TOP BAR */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 18, 25, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #1f2633;
 }
 
+/* MAIN LAYOUT */
 .container {
   max-width: 600px;
   margin: auto;
-  padding: 20px;
-}
-
-h1 {
-  text-align: center;
-}
-
-#feed {
-  background: #161a22;
   padding: 15px;
-  border-radius: 12px;
-  min-height: 400px;
-  border: 1px solid #222;
 }
 
-.post {
-  background: #1b2130;
+/* INPUT CARD */
+.input-card {
+  background: #121824;
+  border: 1px solid #1f2633;
+  border-radius: 14px;
   padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 1px solid #2a3142;
-}
-
-.input-area {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
 input {
-  flex: 1;
+  width: 100%;
   padding: 10px;
+  margin-top: 8px;
   border-radius: 10px;
-  border: 1px solid #2a3142;
-  background: #161a22;
+  border: 1px solid #232b3a;
+  background: #0b0f14;
   color: white;
+  outline: none;
 }
 
 button {
+  margin-top: 10px;
+  width: 100%;
   padding: 10px;
   border-radius: 10px;
   border: none;
   background: #2d6cdf;
   color: white;
   cursor: pointer;
+}
+
+/* FEED */
+#feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* POST CARD */
+.post {
+  background: #121824;
+  border: 1px solid #1f2633;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+/* POST HEADER */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #2d6cdf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+.name {
+  font-weight: 600;
+}
+
+/* TEXT */
+.post-text {
+  margin: 10px 0;
+  color: #cfd6e4;
+}
+
+/* ACTIONS */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  background: transparent;
+  border: 1px solid #2a3447;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #e6e6e6;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: #1c2433;
 }
 </style>
 </head>
@@ -78,20 +149,58 @@ button {
 </div>
 
 <script>
-function post() {
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+// 🔥 Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCJxIvRTvDSfJWJ6L4et9wwc1CAuDC-To",
+  authDomain: "short-stuff-2450e.firebaseapp.com",
+  projectId: "short-stuff-2450e",
+  storageBucket: "short-stuff-2450e.firebasestorage.app",
+  messagingSenderId: "896780231019",
+  appId: "1:896780231019:web:df80fe761636fa67da6c2e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const feed = document.getElementById("feed");
+
+// 👉 Create post (NOW SAVES TO FIREBASE)
+window.post = async function () {
   const text = document.getElementById("textInput").value;
   if (!text) return;
 
-  const feed = document.getElementById("feed");
-
-  const div = document.createElement("div");
-  div.className = "post";
-  div.innerText = text;
-
-  feed.prepend(div);
+  await addDoc(collection(db, "posts"), {
+    text: text,
+    createdAt: serverTimestamp()
+  });
 
   document.getElementById("textInput").value = "";
-}
+};
+
+// 👉 LIVE FEED (REAL TIME)
+onSnapshot(collection(db, "posts"), (snapshot) => {
+  feed.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    const post = doc.data();
+
+    const div = document.createElement("div");
+    div.className = "post";
+    div.innerText = post.text;
+
+    feed.prepend(div);
+  });
+});
 </script>
 
 </body>
