@@ -1,125 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Let us Q&A Website</title>
+  <title>The Q&A Hub</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial;
       margin: 0;
-      background: #000;
-      color: #fff;
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      background: linear-gradient(-45deg, #0f172a, #1e293b, #312e81, #7c3aed);
+      background-size: 400% 400%;
+      animation: gradientMove 12s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     header {
-      background: #4CAF50;
-      color: white;
-      padding: 20px;
       text-align: center;
+      padding: 50px 20px 20px;
+    }
+
+    header h1 {
+      font-size: 42px;
+      margin: 0;
+    }
+
+    header p {
+      opacity: 0.8;
     }
 
     .container {
-      padding: 20px;
-      max-width: 800px;
+      width: 90%;
+      max-width: 900px;
       margin: auto;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    h3 {
+      margin-top: 0;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
+      padding: 16px;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.6);
     }
 
     button {
-      padding: 10px;
-      background: #fff;
-      color: #000;
+      width: 100%;
+      padding: 16px;
       border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(236,72,153,0.4);
     }
 
     .question {
-      background: #111;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: 1px solid #333;
+      margin-top: 15px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: 0.3s;
+      animation: fadeUp 0.4s ease;
+    }
+
+    .question:hover {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.13);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
-
-  <!-- Firebase scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-</head>
-
-<body>
-
-<header>
-  <h1>My Q&A Website</h1>
-  <p>Ask questions and get answers from users</p>
-</header>
-
-<div class="container">
-
-  <h3>Ask a Question</h3>
-  <input id="questionInput" placeholder="Type your question here...">
-  <button onclick="postQuestion()">Post Question</button>
-
-  <h3>Questions</h3>
-  <div id="questionsList"></div>
-
-</div>
-
-<script>
-  // ✅ FIREBASE CONFIG (YOUR REAL ONE)
-  const firebaseConfig = {
-    apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
-    authDomain: "short-stuff-2450e.firebaseapp.com",
-    projectId: "short-stuff-2450e",
-    storageBucket: "short-stuff-2450e.appspot.com",
-    messagingSenderId: "896780231019",
-    appId: "1:896780231019:web:df80fe761636fa67da6c2e"
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  // ➕ Post question
-  function postQuestion() {
-    let text = document.getElementById("questionInput").value;
-
-    if (text.trim() === "") return;
-
-    db.collection("questions").add({
-      text: text,
-      time: new Date()
-    });
-
-    document.getElementById("questionInput").value = "";
-  }
-
-  // 📥 Load questions live
-  function loadQuestions() {
-    db.collection("questions")
-      .orderBy("time", "desc")
-      .onSnapshot(snapshot => {
-        let html = "";
-
-        snapshot.forEach(doc => {
-          html += `
-            <div class="question">
-              ${doc.data().text}
-            </div>
-          `;
-        });
-
-        document.getElementById("questionsList").innerHTML = html;
-      });
-  }
-
-  loadQuestions();
-</script>
-
-</body>
-</html>
