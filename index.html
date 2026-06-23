@@ -1,153 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Social Space</title>
+<meta charset="UTF-8" />
+<title>Social Space</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(120deg, #ff9a9e, #fad0c4);
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg, #ff9a9e, #fad0c4);
+  overflow-x: hidden;
+}
 
-    .container {
-      width: 90%;
-      max-width: 600px;
-      margin: auto;
-      padding-top: 40px;
-    }
+/* Floating background circles */
+.circle {
+  position: fixed;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  animation: float 10s infinite ease-in-out;
+}
 
-    h1 {
-      text-align: center;
-      color: white;
-    }
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-40px); }
+  100% { transform: translateY(0px); }
+}
 
-    #feed {
-      background: rgba(255,255,255,0.8);
-      padding: 15px;
-      border-radius: 15px;
-      min-height: 350px;
-      overflow-y: auto;
-      backdrop-filter: blur(10px);
-    }
+.container {
+  width: 95%;
+  max-width: 600px;
+  margin: auto;
+  padding-top: 30px;
+}
 
-    .message {
-      background: white;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
+h1 {
+  text-align: center;
+  color: white;
+}
 
-    .input-area {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
+/* Post card */
+.post {
+  background: rgba(255,255,255,0.9);
+  border-radius: 15px;
+  padding: 12px;
+  margin: 15px 0;
+  backdrop-filter: blur(10px);
+}
 
-    input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-    }
+/* header */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 10px;
-      background: #ff4d6d;
-      color: white;
-      cursor: pointer;
-    }
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #ff4d6d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
 
-    button: hover {
-      opacity: 0.9;
-    }
-  </style>
+/* buttons */
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.like {
+  color: #ff4d6d;
+}
+
+/* comments */
+.comment-box {
+  margin-top: 10px;
+}
+
+.comment-box input {
+  width: 80%;
+  padding: 6px;
+}
+
+.comment {
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.input-area {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+</style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>💬 Social Space</h1>
+<!-- Floating UI -->
+<div class="circle" style="width:80px;height:80px;top:10%;left:10%;"></div>
+<div class="circle" style="width:50px;height:50px;top:70%;left:20%;"></div>
+<div class="circle" style="width:100px;height:100px;top:40%;left:80%;"></div>
 
-    <div id="feed"></div>
+<div class="container">
+<h1>📱 Social Space</h1>
 
-    <div class="input-area">
-      <input id="nameInput" placeholder="Your name..." />
-      <input id="questionInput" placeholder="Write a message..." />
-      <button id="sendBtn">Send</button>
-    </div>
-  </div>
+<div class="input-area">
+  <input id="nameInput" placeholder="Your name" />
+  <input id="textInput" placeholder="What's on your mind?" />
+  <button onclick="createPost()">Post</button>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp,
-      query,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+<div id="feed"></div>
+</div>
 
-    // 🔥 Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCJxIvRTvDSfJWJ6L4et9wwc1CAuDC-To",
-      authDomain: "short-stuff-2450e.firebaseapp.com",
-      projectId: "short-stuff-2450e",
-      storageBucket: "short-stuff-2450e.firebasestorage.app",
-      messagingSenderId: "896780231019",
-      appId: "1:896780231019:web:df80fe761636fa67da6c2e"
-    };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+  doc,
+  updateDoc,
+  arrayUnion,
+  increment
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    // Init Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyCJxIvRTvDSfJWJ6L4et9wwc1CAuDC-To",
+  authDomain: "short-stuff-2450e.firebaseapp.com",
+  projectId: "short-stuff-2450e",
+  storageBucket: "short-stuff-2450e.firebasestorage.app",
+  messagingSenderId: "896780231019",
+  appId: "1:896780231019:web:df80fe761636fa67da6c2e"
+};
 
-    const feed = document.getElementById("feed");
-    const sendBtn = document.getElementById("sendBtn");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    // Send message
-    sendBtn.addEventListener("click", async () => {
-      const name = document.getElementById("nameInput").value;
-      const text = document.getElementById("questionInput").value;
+window.createPost = async function () {
+  const name = document.getElementById("nameInput").value;
+  const text = document.getElementById("textInput").value;
 
-      if (!name || !text) return;
+  if (!name || !text) return;
 
-      try {
-        await addDoc(collection(db, "messages"), {
-          name,
-          text,
-          createdAt: serverTimestamp()
-        });
+  await addDoc(collection(db, "posts"), {
+    name,
+    text,
+    likes: 0,
+    comments: [],
+    createdAt: serverTimestamp()
+  });
 
-        document.getElementById("questionInput").value = "";
-      } catch (err) {
-        console.error("Error sending message:", err);
-      }
-    });
+  document.getElementById("textInput").value = "";
+};
 
-    // Live messages
-    const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+const feed = document.getElementById("feed");
 
-    onSnapshot(q, (snapshot) => {
-      feed.innerHTML = "";
+/* REAL-TIME FEED */
+onSnapshot(collection(db, "posts"), (snapshot) => {
+  feed.innerHTML = "";
 
-      snapshot.forEach((doc) => {
-        const msg = doc.data();
+  snapshot.forEach((docSnap) => {
+    const post = docSnap.data();
+    const id = docSnap.id;
 
-        const div = document.createElement("div");
-        div.className = "message";
-        div.textContent = `${msg.name}: ${msg.text}`;
+    const div = document.createElement("div");
+    div.className = "post";
 
-        feed.appendChild(div);
-      });
-    });
-  </script>
+    const initial = post.name?.charAt(0).toUpperCase();
+
+    div.innerHTML = `
+      <div class="post-header">
+        <div class="avatar">${initial}</div>
+        <strong>${post.name}</strong>
+      </div>
+
+      <p>${post.text}</p>
+
+      <div class="actions">
+        <button class="like" onclick="likePost('${id}', ${post.likes})">
+          ❤️ ${post.likes || 0}
+        </button>
+      </div>
+
+      <div class="comment-box">
+        <input id="c-${id}" placeholder="Write comment..." />
+        <button onclick="commentPost('${id}')">Send</button>
+        <div id="comments-${id}">
+          ${(post.comments || []).map(c => `<div class="comment">💬 ${c}</div>`).join("")}
+        </div>
+      </div>
+    `;
+
+    feed.appendChild(div);
+  });
+});
+
+/* LIKE */
+window.likePost = async function(id, likes) {
+  const ref = doc(db, "posts", id);
+  await updateDoc(ref, {
+    likes: increment(1)
+  });
+};
+
+/* COMMENT */
+window.commentPost = async function(id) {
+  const input = document.getElementById("c-" + id);
+  const text = input.value;
+
+  if (!text) return;
+
+  const ref = doc(db, "posts", id);
+
+  await updateDoc(ref, {
+    comments: arrayUnion(text)
+  });
+
+  input.value = "";
+};
+
+</script>
 
 </body>
 </html>
