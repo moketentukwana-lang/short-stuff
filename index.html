@@ -1,230 +1,282 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>The Q&A Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE Q&A HUB</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: 'Poppins', sans-serif;
-      color: white;
-      background: linear-gradient(-45deg, #0f172a, #1e293b, #312e81, #7c3aed);
-      background-size: 400% 400%;
-      animation: gradientMove 12s ease infinite;
-    }
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  color: white;
+  background: linear-gradient(-45deg, #0f172a, #1e293b, #312e81, #7c3aed);
+  background-size: 400% 400%;
+  animation: gradientMove 12s ease infinite;
+}
 
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+@keyframes gradientMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
 
-    header {
-      text-align: center;
-      padding: 40px 20px;
-    }
+header {
+  text-align: center;
+  padding: 60px 20px 40px;
+}
 
-    .container {
-      width: 90%;
-      max-width: 900px;
-      margin: auto;
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(18px);
-      border-radius: 24px;
-      padding: 30px;
-    }
+header h1 {
+  margin: 0;
+  font-size: 58px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #ffffff, #f9a8d4, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
+header p {
+  font-size: 20px;
+  opacity: 0.9;
+  margin-top: 15px;
+}
 
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #8b5cf6, #ec4899);
-      color: white;
-      font-weight: bold;
-      margin-right: 8px;
-      margin-top: 8px;
-    }
+.container {
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
 
-    .question {
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-    }
+input {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  outline: none;
+}
 
-    .answer {
-      margin-top: 8px;
-      padding: 10px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-    }
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  background: linear-gradient(90deg, #8b5cf6, #ec4899);
+  margin-top: 8px;
+  margin-right: 8px;
+  transition: 0.3s;
+}
 
-    small {
-      opacity: 0.7;
-    }
-  </style>
+button:hover {
+  transform: translateY(-2px);
+}
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+.question {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
+}
+
+.answer {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+}
+
+.question-actions {
+  margin-top: 10px;
+}
+
+small {
+  opacity: 0.7;
+}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
-
 <body>
 
 <header>
-  <h1>Q&A Hub</h1>
-  <p>Ask questions and get answers from everyone</p>
+  <h1>THE Q&A HUB</h1>
+  <p>Ask Bold. Think Bright. Grow Together.</p>
 </header>
 
 <div class="container">
+  <h2>Ask a Question</h2>
 
-  <h3>Ask a Question</h3>
-
-  <input id="nameInput" placeholder="Your name (or leave blank for Anonymous)">
-  <input id="questionInput" placeholder="Type your question here...">
+  <input id="nameInput" placeholder="Your name (leave blank for Anonymous)">
+  <input id="questionInput" placeholder="Type your question...">
   <button onclick="postQuestion()">Post Question</button>
 
-  <h3>Questions</h3>
+  <h2>Questions</h2>
   <div id="questionsList"></div>
 </div>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "short-stuff-2450e.firebaseapp.com",
-    projectId: "short-stuff-2450e",
-    storageBucket: "short-stuff-2450e.appspot.com",
-    messagingSenderId: "896780231019",
-    appId: "1:896780231019:web:df80fe761636fa67da6c2e"
-  };
+const firebaseConfig = {
+  apiKey: AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To,
+  authDomain: "short-stuff-2450e.firebaseapp.com",
+  projectId: "short-stuff-2450e",
+  storageBucket: "short-stuff-2450e.appspot.com",
+  messagingSenderId: "896780231019",
+  appId: "1:896780231019:web:df80fe761636fa67da6c2e"
+};
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  function postQuestion() {
-    let text = document.getElementById("questionInput").value;
-    let name = document.getElementById("nameInput").value;
+let userId = localStorage.getItem("userId");
 
-    if (text.trim() === "") return;
-    if (name.trim() === "") name = "Anonymous";
+if (!userId) {
+  userId = Math.random().toString(36).substring(2) + Date.now();
+  localStorage.setItem("userId", userId);
+}
 
-    db.collection("questions").add({
-      text: text,
-      name: name,
-      likes: 0,
-      answers: [],
-      time: Date.now()
-    });
+function postQuestion() {
+  let text = document.getElementById("questionInput").value;
+  let name = document.getElementById("nameInput").value;
 
-    document.getElementById("questionInput").value = "";
-  }
+  if (text.trim() === "") return;
+  if (name.trim() === "") name = "Anonymous";
 
-  function likeQuestion(id, likes) {
+  db.collection("questions").add({
+    text,
+    name,
+    likes: 0,
+    likedBy: [],
+    answers: [],
+    time: Date.now(),
+    ownerId: userId
+  });
+
+  document.getElementById("questionInput").value = "";
+}
+
+function likeQuestion(id) {
+  db.collection("questions").doc(id).get().then(doc => {
+    let data = doc.data();
+    let likedBy = data.likedBy || [];
+
+    if (likedBy.includes(userId)) {
+      alert("You already liked this post.");
+      return;
+    }
+
+    likedBy.push(userId);
+
     db.collection("questions").doc(id).update({
-      likes: likes + 1
+      likes: data.likes + 1,
+      likedBy: likedBy
     });
-  }
+  });
+}
 
-  function deleteQuestion(id) {
-    db.collection("questions").doc(id).delete();
-  }
+function deleteQuestion(id) {
+  db.collection("questions").doc(id).delete();
+}
 
-  function addAnswer(id) {
-    let input = document.getElementById("answer-" + id);
-    let answer = input.value;
+function addAnswer(id) {
+  let input = document.getElementById("answer-" + id);
+  let answer = input.value;
 
-    if (answer.trim() === "") return;
+  if (answer.trim() === "") return;
 
-    db.collection("questions").doc(id).get().then(doc => {
-      let answers = doc.data().answers || [];
-      answers.push(answer);
+  db.collection("questions").doc(id).get().then(doc => {
+    let answers = doc.data().answers || [];
+    answers.push(answer);
 
-      db.collection("questions").doc(id).update({
-        answers: answers
-      });
-
-      input.value = "";
+    db.collection("questions").doc(id).update({
+      answers: answers
     });
-  }
 
-  function timeAgo(timestamp) {
-    let seconds = Math.floor((Date.now() - timestamp) / 1000);
+    input.value = "";
+  });
+}
 
-    if (seconds < 60) return seconds + " sec ago";
+function timeAgo(timestamp) {
+  let seconds = Math.floor((Date.now() - timestamp) / 1000);
 
-    let minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return minutes + " min ago";
+  if (seconds < 60) return seconds + " sec ago";
 
-    let hours = Math.floor(minutes / 60);
-    if (hours < 24) return hours + " hrs ago";
+  let minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return minutes + " min ago";
 
-    let days = Math.floor(hours / 24);
-    return days + " days ago";
-  }
+  let hours = Math.floor(minutes / 60);
+  if (hours < 24) return hours + " hrs ago";
 
-  function loadQuestions() {
-    db.collection("questions")
-      .orderBy("time", "desc")
-      .onSnapshot(snapshot => {
+  let days = Math.floor(hours / 24);
+  return days + " days ago";
+}
 
-        let html = "";
+function loadQuestions() {
+  db.collection("questions")
+    .orderBy("time", "desc")
+    .onSnapshot(snapshot => {
+      let html = "";
 
-        snapshot.forEach(doc => {
-          let q = doc.data();
+      snapshot.forEach(doc => {
+        let q = doc.data();
 
-          let answersHtml = "";
-          if (q.answers) {
-            q.answers.forEach(answer => {
-              answersHtml += `<div class="answer">💬 ${answer}</div>`;
-            });
-          }
-
-          html += `
-            <div class="question">
-              <strong>${q.name}</strong>
-              <small> • ${timeAgo(q.time)}</small>
-
-              <p>${q.text}</p>
-
-              <button onclick="likeQuestion('${doc.id}', ${q.likes})">
-                ❤️ ${q.likes}
-              </button>
-
-              <button onclick="deleteQuestion('${doc.id}')">
-                Delete
-              </button>
-
-              <div>
-                <input id="answer-${doc.id}" placeholder="Write an answer...">
-                <button onclick="addAnswer('${doc.id}')">Reply</button>
-              </div>
-
-              ${answersHtml}
-            </div>
-          `;
+        let answersHtml = "";
+        (q.answers || []).forEach(answer => {
+          answersHtml += `<div class="answer">💬 ${answer}</div>`;
         });
 
-        document.getElementById("questionsList").innerHTML = html;
-      });
-  }
+        let deleteButton = "";
+        if (q.ownerId === userId) {
+          deleteButton = `<button onclick="deleteQuestion('${doc.id}')">Delete</button>`;
+        }
 
-  loadQuestions();
+        html += `
+          <div class="question">
+            <strong>${q.name}</strong>
+            <small> • ${timeAgo(q.time)}</small>
+
+            <p>${q.text}</p>
+
+            <div class="question-actions">
+              <button onclick="likeQuestion('${doc.id}')">❤️ ${q.likes}</button>
+              ${deleteButton}
+            </div>
+
+            <div style="margin-top:15px;">
+              <input id="answer-${doc.id}" placeholder="Write an answer...">
+              <button onclick="addAnswer('${doc.id}')">Reply</button>
+            </div>
+
+            ${answersHtml}
+          </div>
+        `;
+      });
+
+      document.getElementById("questionsList").innerHTML = html;
+    });
+}
+
+document.getElementById("questionInput").addEventListener("keypress", function(e){
+  if (e.key === "Enter") postQuestion();
+});
+
+loadQuestions();
 </script>
 
 </body>
