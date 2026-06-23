@@ -1,11 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Social Space</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Social Space</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #ff9a9e, #fad0c4);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: auto;
+      padding-top: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+    }
+
+    #feed {
+      background: rgba(255,255,255,0.8);
+      padding: 15px;
+      border-radius: 15px;
+      min-height: 350px;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    .message {
+      background: white;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+    }
+
+    button: hover {
+      opacity: 0.9;
+    }
+  </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -18,130 +80,74 @@
       <input id="questionInput" placeholder="Write a message..." />
       <button id="sendBtn">Send</button>
     </div>
-
   </div>
 
-  <script type="module" src="app.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // 🔥 Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJxIvRTvDSfJWJ6L4et9wwc1CAuDC-To",
+      authDomain: "short-stuff-2450e.firebaseapp.com",
+      projectId: "short-stuff-2450e",
+      storageBucket: "short-stuff-2450e.firebasestorage.app",
+      messagingSenderId: "896780231019",
+      appId: "1:896780231019:web:df80fe761636fa67da6c2e"
+    };
+
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const feed = document.getElementById("feed");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // Send message
+    sendBtn.addEventListener("click", async () => {
+      const name = document.getElementById("nameInput").value;
+      const text = document.getElementById("questionInput").value;
+
+      if (!name || !text) return;
+
+      try {
+        await addDoc(collection(db, "messages"), {
+          name,
+          text,
+          createdAt: serverTimestamp()
+        });
+
+        document.getElementById("questionInput").value = "";
+      } catch (err) {
+        console.error("Error sending message:", err);
+      }
+    });
+
+    // Live messages
+    const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+
+    onSnapshot(q, (snapshot) => {
+      feed.innerHTML = "";
+
+      snapshot.forEach((doc) => {
+        const msg = doc.data();
+
+        const div = document.createElement("div");
+        div.className = "message";
+        div.textContent = `${msg.name}: ${msg.text}`;
+
+        feed.appendChild(div);
+      });
+    });
+  </script>
+
 </body>
 </html>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(120deg, #ff9a9e, #fad0c4);
-  transition: background 1s ease;
-}
-
-.container {
-  width: 90%;
-  max-width: 600px;
-  margin: auto;
-  padding-top: 40px;
-}
-
-h1 {
-  text-align: center;
-  color: white;
-}
-
-#feed {
-  background: rgba(255,255,255,0.8);
-  padding: 15px;
-  border-radius: 15px;
-  min-height: 350px;
-  overflow-y: auto;
-  backdrop-filter: blur(10px);
-}
-
-.message {
-  background: white;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 10px;
-}
-
-.input-area {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
-  background: #ff4d6d;
-  color: white;
-  cursor: pointer;
-}
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-// 🔥 Your Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyCJxIvRTvDSfJWJ6L4et9wwc1CAuDC-To",
-  authDomain: "short-stuff-2450e.firebaseapp.com",
-  projectId: "short-stuff-2450e",
-  storageBucket: "short-stuff-2450e.firebasestorage.app",
-  messagingSenderId: "896780231019",
-  appId: "1:896780231019:web:df80fe761636fa67da6c2e"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// UI elements
-const feed = document.getElementById("feed");
-const sendBtn = document.getElementById("sendBtn");
-
-// Send message
-sendBtn.addEventListener("click", async () => {
-  const name = document.getElementById("nameInput").value;
-  const text = document.getElementById("questionInput").value;
-
-  if (!name || !text) return;
-
-  await addDoc(collection(db, "messages"), {
-    name: name,
-    text: text,
-    createdAt: serverTimestamp()
-  });
-
-  document.getElementById("questionInput").value = "";
-});
-
-// Real-time listener
-const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
-
-onSnapshot(q, (snapshot) => {
-  feed.innerHTML = "";
-
-  snapshot.forEach((doc) => {
-    const msg = doc.data();
-
-    const div = document.createElement("div");
-    div.classList.add("message");
-
-    div.innerHTML = `
-      <strong>${msg.name}</strong><br/>
-      ${msg.text}
-    `;
-
-    feed.appendChild(div);
-  });
-});
