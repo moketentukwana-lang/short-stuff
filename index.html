@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Social Space</title>
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
     * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 body {
     font-family: 'Inter', sans-serif;
     background: #090d14;
@@ -22,8 +18,6 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
 }
-
-/* Animated background glows */
 .background-glow {
     position: fixed;
     border-radius: 50%;
@@ -46,8 +40,6 @@ body {
     right: 80px;
     bottom: 80px;
 }
-
-/* Top bar */
 .topbar {
     position: sticky;
     top: 0;
@@ -73,16 +65,12 @@ body {
     gap: 20px;
     font-size: 22px;
 }
-
-/* Layout */
 .layout {
     display: grid;
     grid-template-columns: 250px 1fr 260px;
     gap: 25px;
     padding: 30px;
 }
-
-/* Sidebar */
 .sidebar {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(18px);
@@ -91,7 +79,6 @@ body {
     padding: 25px;
     height: fit-content;
 }
-
 .menu-item {
     padding: 15px;
     border-radius: 14px;
@@ -99,18 +86,13 @@ body {
     cursor: pointer;
     transition: 0.3s;
 }
-
 .menu-item:hover,
 .active {
     background: rgba(88,166,255,0.18);
 }
-
-/* Feed */
 .feed-area {
     width: 100%;
 }
-
-/* Input Card */
 .input-card {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(18px);
@@ -123,7 +105,6 @@ body {
 .input-card h3 {
     margin-bottom: 15px;
 }
-
 input {
     width: 100%;
     padding: 14px;
@@ -134,7 +115,6 @@ input {
     font-size: 15px;
     outline: none;
 }
-
 button {
     width: 100%;
     margin-top: 15px;
@@ -151,14 +131,11 @@ button:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 25px rgba(88,166,255,0.45);
 }
-/* Feed */
 #feed {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
-
-/* Posts */
 .post {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(18px);
@@ -285,7 +262,6 @@ import {
     orderBy,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
 const firebaseConfig = {
     apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
     authDomain: "short-stuff-2450e.firebaseapp.com",
@@ -296,7 +272,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const feed = document.getElementById("feed");
 const textInput = document.getElementById("textInput");
 window.post = async function () {
@@ -344,7 +319,6 @@ onSnapshot(q, (snapshot) => {
                 <button class="action-btn">↗ Share</button>
             </div>
         `;
-
         feed.appendChild(card);
     });
 });
