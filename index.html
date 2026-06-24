@@ -312,7 +312,87 @@ button:hover {
     <button class="floating-post">+</button>
 
     <script type="module">
-        /* PART 3 JS GOES HERE */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+/* Firebase config */
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const feed = document.getElementById("feed");
+const textInput = document.getElementById("textInput");
+
+/* Create post */
+window.post = async function () {
+    const text = textInput.value.trim();
+
+    if (!text) return;
+
+    try {
+        await addDoc(collection(db, "posts"), {
+            username: "Neo",
+            text: text,
+            likes: 0,
+            createdAt: serverTimestamp()
+        });
+
+        textInput.value = "";
+    } catch (error) {
+        console.error(error);
+        alert("Post failed.");
+    }
+};
+
+/* Live feed */
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+
+onSnapshot(q, (snapshot) => {
+    feed.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+        const post = doc.data();
+
+        const card = document.createElement("div");
+        card.className = "post";
+
+        card.innerHTML = `
+            <div class="post-header">
+                <div class="avatar">${post.username[0]}</div>
+                <div>
+                    <div class="name">${post.username}</div>
+                    <small>Just posted</small>
+                </div>
+            </div>
+
+            <div class="post-text">${post.text}</div>
+
+            <div class="actions">
+                <button class="action-btn">❤️ Like</button>
+                <button class="action-btn">💬 Comment</button>
+                <button class="action-btn">↗ Share</button>
+            </div>
+        `;
+
+        feed.appendChild(card);
+    });
+});
     </script>
 
 </body>
