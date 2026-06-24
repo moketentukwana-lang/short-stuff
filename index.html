@@ -202,7 +202,6 @@ button:hover {
     color: white;
     cursor: pointer;
 }
-/* Right panel */
 .right-panel {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(18px);
@@ -217,7 +216,6 @@ button:hover {
     margin-top: 12px;
     background: rgba(255,255,255,0.04);
 }
-/* Floating button */
 .floating-post {
     position: fixed;
     bottom: 30px;
@@ -228,7 +226,6 @@ button:hover {
     font-size: 30px;
     z-index: 1000;
 }
-/* Animation */
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -242,12 +239,8 @@ button:hover {
     </style>
 </head>
 <body>
-
-    <!-- Animated Background -->
     <div class="background-glow glow1"></div>
     <div class="background-glow glow2"></div>
-
-    <!-- Top Navbar -->
     <header class="topbar">
         <div class="logo">Social Space</div>
         <div class="nav-icons">
@@ -256,27 +249,21 @@ button:hover {
             <span>👤</span>
         </div>
     </header>
-    <!-- Main Layout -->
     <div class="layout">
-        <!-- Left Sidebar -->
         <aside class="sidebar">
             <div class="menu-item active">🏠 Home</div>
             <div class="menu-item">🔥 Trending</div>
             <div class="menu-item">👥 Friends</div>
             <div class="menu-item">⚙ Settings</div>
         </aside>
-        <!-- Main Feed -->
         <main class="feed-area">
-            <!-- Post Input -->
             <div class="input-card">
                 <h3>Create Post</h3>
                 <input id="textInput" placeholder="What's on your mind?" />
                 <button onclick="post()">Post</button>
             </div>
-            <!-- Posts Render Here -->
             <div id="feed"></div>
         </main>
-        <!-- Right Panel -->
         <aside class="right-panel">
             <h3>Trending</h3>
             <div class="trend-card">#Technology</div>
@@ -285,7 +272,6 @@ button:hover {
             <div class="trend-card">#Sports</div>
         </aside>
     </div>
-    <!-- Floating Button -->
 <button class="floating-post">+</button>
 <script type="module">
 <script type="module">
@@ -308,19 +294,14 @@ const firebaseConfig = {
     messagingSenderId: "896780231019",
     appId: "1:896780231019:web:df80fe761636fa67da6c2e"
 };
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const feed = document.getElementById("feed");
 const textInput = document.getElementById("textInput");
-
-/* Create post */
 window.post = async function () {
     const text = textInput.value.trim();
-
     if (!text) return;
-
     try {
         await addDoc(collection(db, "posts"), {
             username: "Neo",
@@ -328,35 +309,26 @@ window.post = async function () {
             likes: 0,
             createdAt: serverTimestamp()
         });
-
         textInput.value = "";
-
     } catch (error) {
         console.error(error);
         alert("Post failed.");
     }
 };
-
-/* Floating button */
 document.querySelector(".floating-post").addEventListener("click", () => {
     textInput.focus();
 });
-
-/* Live feed */
 const q = query(
     collection(db, "posts"),
     orderBy("createdAt", "desc")
 );
-
 onSnapshot(q, (snapshot) => {
     feed.innerHTML = "";
 
     snapshot.forEach((doc) => {
         const post = doc.data();
-
         const card = document.createElement("div");
         card.className = "post";
-
         card.innerHTML = `
             <div class="post-header">
                 <div class="avatar">${post.username ? post.username[0] : "U"}</div>
@@ -365,9 +337,7 @@ onSnapshot(q, (snapshot) => {
                     <small>Just posted</small>
                 </div>
             </div>
-
             <div class="post-text">${post.text}</div>
-
             <div class="actions">
                 <button class="action-btn">❤️ Like</button>
                 <button class="action-btn">💬 Comment</button>
