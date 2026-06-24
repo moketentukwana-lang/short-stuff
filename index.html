@@ -147,12 +147,10 @@ button {
     cursor: pointer;
     transition: 0.3s;
 }
-
 button:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 25px rgba(88,166,255,0.45);
 }
-
 /* Feed */
 #feed {
     display: flex;
@@ -169,13 +167,11 @@ button:hover {
     padding: 20px;
     animation: fadeUp 0.4s ease;
 }
-
 .post-header {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
 .avatar {
     width: 45px;
     height: 45px;
@@ -186,21 +182,17 @@ button:hover {
     align-items: center;
     font-weight: bold;
 }
-
 .name {
     font-weight: 700;
 }
-
 .post-text {
     margin: 18px 0;
     color: #d6d6d6;
 }
-
 .actions {
     display: flex;
     gap: 12px;
 }
-
 .action-btn {
     flex: 1;
     background: rgba(255,255,255,0.05);
@@ -210,7 +202,6 @@ button:hover {
     color: white;
     cursor: pointer;
 }
-
 /* Right panel */
 .right-panel {
     background: rgba(255,255,255,0.05);
@@ -220,14 +211,12 @@ button:hover {
     padding: 25px;
     height: fit-content;
 }
-
 .trend-card {
     padding: 14px;
     border-radius: 14px;
     margin-top: 12px;
     background: rgba(255,255,255,0.04);
 }
-
 /* Floating button */
 .floating-post {
     position: fixed;
@@ -239,7 +228,6 @@ button:hover {
     font-size: 30px;
     z-index: 1000;
 }
-
 /* Animation */
 @keyframes fadeUp {
     from {
@@ -262,17 +250,14 @@ button:hover {
     <!-- Top Navbar -->
     <header class="topbar">
         <div class="logo">Social Space</div>
-
         <div class="nav-icons">
             <span>🔔</span>
             <span>💬</span>
             <span>👤</span>
         </div>
     </header>
-
     <!-- Main Layout -->
     <div class="layout">
-
         <!-- Left Sidebar -->
         <aside class="sidebar">
             <div class="menu-item active">🏠 Home</div>
@@ -280,37 +265,28 @@ button:hover {
             <div class="menu-item">👥 Friends</div>
             <div class="menu-item">⚙ Settings</div>
         </aside>
-
         <!-- Main Feed -->
         <main class="feed-area">
-
             <!-- Post Input -->
             <div class="input-card">
                 <h3>Create Post</h3>
                 <input id="textInput" placeholder="What's on your mind?" />
                 <button onclick="post()">Post</button>
             </div>
-
             <!-- Posts Render Here -->
             <div id="feed"></div>
-
         </main>
-
         <!-- Right Panel -->
         <aside class="right-panel">
             <h3>Trending</h3>
-
             <div class="trend-card">#Technology</div>
             <div class="trend-card">#AI</div>
             <div class="trend-card">#Gaming</div>
             <div class="trend-card">#Sports</div>
         </aside>
-
     </div>
-
     <!-- Floating Button -->
 <button class="floating-post">+</button>
-
 <script type="module">
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -332,7 +308,6 @@ const firebaseConfig = {
     messagingSenderId: "896780231019",
     appId: "1:896780231019:web:df80fe761636fa67da6c2e"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
