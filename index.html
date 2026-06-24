@@ -309,10 +309,10 @@ button:hover {
     </div>
 
     <!-- Floating Button -->
-    <button class="floating-post">+</button>
+<button class="floating-post">+</button>
 
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -322,7 +322,7 @@ import {
     orderBy,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
+    
 const firebaseConfig = {
   apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
   authDomain: "short-stuff-2450e.firebaseapp.com",
@@ -352,7 +352,8 @@ window.post = async function () {
             likes: 0,
             createdAt: serverTimestamp()
         });
-
+document.getElementById("textInput").value = "";
+};
         textInput.value = "";
     } catch (error) {
         console.error(error);
@@ -393,3 +394,4 @@ onSnapshot(q, (snapshot) => {
         feed.appendChild(card);
     });
 });
+</script>
