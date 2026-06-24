@@ -324,8 +324,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
-import { initializeApp } from "firebase/app";
-const firebaseConfig = {
   apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
   authDomain: "short-stuff-2450e.firebaseapp.com",
   projectId: "short-stuff-2450e",
@@ -335,9 +333,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-};
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -379,9 +374,9 @@ onSnapshot(q, (snapshot) => {
 
         card.innerHTML = `
             <div class="post-header">
-                <div class="avatar">${post.username[0]}</div>
+                <div class="avatar">${post.username ? post.username[0] : "U"}</div>
                 <div>
-                    <div class="name">${post.username}</div>
+                    <div class="name">${post.username || "Unknown"}</div>
                     <small>Just posted</small>
                 </div>
             </div>
@@ -398,7 +393,3 @@ onSnapshot(q, (snapshot) => {
         feed.appendChild(card);
     });
 });
-    </script>
-
-</body>
-</html>
