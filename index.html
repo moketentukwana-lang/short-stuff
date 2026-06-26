@@ -245,11 +245,11 @@ button:hover {
             <div class="input-card">
                 <h3>Create Post</h3>
                 <input id="textInput" placeholder="What's on your mind?" />
-<a id="postButton" href="https://www.google.com" target="_blank" class="styled-link">
-  Post
-</a>
-  <a href="https://www.google.com" target="_blank" style="color:white; text-decoration:none;">Post</a>
-</button>
+<input id="textInput" placeholder="What's on your mind?" />
+   <button id="postButton" onclick="post()">
+            Post
+        </button>
+    </div>
             </div>
             <div id="feed"></div>
         </main>
@@ -285,7 +285,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const feed = document.getElementById("feed");
 const textInput = document.getElementById("textInput");
-window.post = async function () {
+window.post = async function () {onclick="post()"
     const text = textInput.value.trim();
     if (!text) return;
     try {
@@ -319,12 +319,6 @@ onSnapshot(q, (snapshot) => {
             <div class="post-header">
                 <div class="avatar">${post.username ? post.username[0] : "U"}</div>
                 <div>
-                <a href="https://google.com">
-    <button type="button">Go to Google</button>
-</a>
-">
-    <button type="button">Go to Google</button>
-</a>
                     <div class="name">${post.username || "Unknown"}</div>
                     <small>Just posted</small>
                 </div>
