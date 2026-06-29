@@ -284,7 +284,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const feed = document.getElementById("feed");
-const textInput = document.getElementById("postButton").addEventListener("click", () => {
+const textInput = document.getElementById("textInput");
+const postButton = document.getElementById("postButton");
+
+postButton.addEventListener("click", () => {
     createPost(textInput.value);
 });
 window.post =async function createPost(text) {
