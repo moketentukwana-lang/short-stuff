@@ -290,19 +290,27 @@ const postButton = document.getElementById("postButton");
 postButton.addEventListener("click", () => {
     createPost(textInput.value);
 });
-window.post =async function createPost(text) {
-    if (!text.trim()) return;
+async function createPost() {
+    const text = textInput.value.trim(); 
+    if (!text) return; 
     try {
         await addDoc(collection(db, "posts"), {
             username: "Neo",
-            text: text.trim(),
+            text,
             likes: 0,
             createdAt: serverTimestamp()
         });
-        textInput.value = "";
+        textInput.value = ""; 
     } catch (error) {
-        console.error(error);
+        console.error("Post failed:", error);
         alert("Post failed.");
+    }
+}
+
+    }
+}
+
+postButton.addEventListener("click", createPost);
     }
 };
     async function likePost(postId, currentLikes) {
