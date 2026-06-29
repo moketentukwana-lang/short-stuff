@@ -285,13 +285,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const feed = document.getElementById("feed");
 const textInput = document.getElementById("textInput");
-window.post = async function () {onclick="post()"
-    const text = textInput.value.trim();
-    if (!text) return;
+window.post =async function createPost(text) {
+    if (!text.trim()) return;
     try {
         await addDoc(collection(db, "posts"), {
             username: "Neo",
-            text: text,
+            text: text.trim(),
             likes: 0,
             createdAt: serverTimestamp()
         });
@@ -301,6 +300,13 @@ window.post = async function () {onclick="post()"
         alert("Post failed.");
     }
 };
+    async function likePost(postId, currentLikes) {
+    const postRef = doc(db, "posts", postId);
+    try {
+        await updateDoc(postRef, { likes: currentLikes + 1 });
+    } catch (error) {
+        console.error("Like failed:", error);
+        alert("Failed to like post.");
 document.querySelector(".floating-post").addEventListener("click", () => {
     textInput.focus();
 });
