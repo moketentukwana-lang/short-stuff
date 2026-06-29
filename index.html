@@ -245,9 +245,8 @@ button:hover {
             <div class="input-card">
                 <h3>Create Post</h3>
                 <input id="textInput" placeholder="What's on your mind?" />
-<input id="textInput" placeholder="What's on your mind?" />
-   <button id="postButton" onclick="post()">
-            Post
+                <button id="postButton">Post</button>
+</div>
         </button>
     </div>
             </div>
@@ -272,19 +271,22 @@ import {
     query,
     orderBy,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyCJxIvRTvDSfJWQJ6L4et9wwc1CAuDC-To",
   authDomain: "short-stuff-2450e.firebaseapp.com",
   projectId: "short-stuff-2450e",
-  storageBucket: "short-stuff-2450e.firebasestorage.app",
+  storageBucket: "short-stuff-2450e.appspot.com"
   messagingSenderId: "896780231019",
   appId: "1:896780231019:web:df80fe761636fa67da6c2e"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const feed = document.getElementById("feed");
-const textInput = document.getElementById("textInput");
+const textInput = document.getElementById("postButton").addEventListener("click", () => {
+    createPost(textInput.value);
+});
 window.post =async function createPost(text) {
     if (!text.trim()) return;
     try {
